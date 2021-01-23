@@ -6,6 +6,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;   // (a)
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route; // (b)
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use AppBundle\Entity\Unsei;                // (a)
+use AppBundle\Repository\UnseiRepository;  // (b)
 
 class OmikujiController extends Controller  // ①
 {
@@ -20,7 +22,10 @@ class OmikujiController extends Controller  // ①
      */
     public function omikujiAction(Request $request, $yourname)  // ②
     {
-        $omikuji = ['大吉', '中吉', '小吉', '末吉', '凶'];
+        // $omikuji = ['大吉', '中吉', '小吉', '末吉', '凶'];
+        $repository = $this->getDoctrine()->getRepository(Unsei::class);
+        $omikuji = $repository->findAll();
+
         $number = rand(0, count($omikuji) - 1);
 
         // return new Response(  // ③

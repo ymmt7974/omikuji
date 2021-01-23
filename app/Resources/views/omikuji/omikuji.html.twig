@@ -1,7 +1,8 @@
-{% extends 'base.html.twig' %}               {# ① #}
+{% extends 'base.html.twig' %}
 
-{% block title %}おみくじ{% endblock %}       {# ② #}
+{% block title %}おみくじ{% endblock %}
 
-{% block body %}                             {# ③ #}
-    {{ name }}さんの運勢は {{ unsei }} です。  {# ④ #}
+{% block body %}
+    {# {{ name }}さんの運勢は {{ unsei }} です。※コメントアウト #}
+    {{ name }}さんの運勢は {{ unsei.name }} です。
 {% endblock %}
