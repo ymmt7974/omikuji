@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}運勢一覧{% endblock %}
+
+{% block body %}
+    <table>
+        <tr>
+            <th>運勢</th>
+            <th>操作</th>
+        </tr>
+        {% for unsei in unseis %}
+        <tr>
+            <td>{{ unsei.name }}</td>
+            <td>
+                {# ① #}
+                <a href="{{ path('unsei_edit', {'id': unsei.id}) }}">編集</a>
+                削除
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <hr>
+
+    {# ② #}
+    <a href="{{ path('unsei_new') }}">新規追加</a>
+{% endblock %}

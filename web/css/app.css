@@ -1,0 +1,6 @@
+.menu {
+  padding-left: 0;
+}
+.menu > li {
+  display: inline-block;
+}

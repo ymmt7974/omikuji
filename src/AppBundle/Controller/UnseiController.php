@@ -3,14 +3,98 @@ namespace AppBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use AppBundle\Entity\Unsei;
+use Doctrine\ORM\EntityManager;
 
 /**
  * @Route("/unsei")
  */
 class UnseiController extends Controller
 {
+    /**
+     * 運勢一覧の表示
+     * 
+     * @Route("/", name="unsei_index")
+     * @Method("GET")  // ①
+     * 
+     * @param Request $request
+     * @return Response
+     */
+    public function indexAction(Request $request)
+    {
+        $repository = $this->getDoctrine()->getRepository(Unsei::class);
+        $unseis = $repository->findAll();
+
+        return $this->render('unsei/index.html.twig', ['unseis' => $unseis]);
+    }
+    
+    /**
+     * 運勢の新規作成
+     * 
+     * @Route("/new", name="unsei_new")
+     * @Method({"GET", "POST"}) 
+     * 
+     * @param Request $request
+     * @return Response
+     */ 
+    public function newAction(Request $request)
+    {
+        $unsei = new Unsei();
+        
+        $form = $this->createFormBuilder($unsei)
+            ->add('name', TextType::class)
+            ->getForm();
+
+        // Form送信のハンドリング
+        $form->handleRequest($request);                   // ①
+        if ($form->isSubmitted() && $form->isValid()) {   // ②
+            /** @var EntityManager $em */
+            $em = $this->getDoctrine()->getManager();     // ③
+            $em->persist($unsei);
+            $em->flush();
+            
+            return $this->redirectToRoute('unsei_index'); // ④
+        }
+
+        return $this->render('unsei/new.html.twig', [
+            'form' => $form->createView()
+        ]);
+    }
+
+    
+    /**
+     * 運勢の編集
+     * 
+     * @Route("/{id}/edit", name="unsei_edit")
+     * @Method({"GET", "PUT"})  // ③
+     * 
+     * @param Request $request
+     * @return Response
+     */
+    public function editAction(Request $request, $id)
+    {
+        return new Response('editAction');
+    }
+    
+    /**
+     * 運勢の削除
+     * 
+     * @Route("/{id}", name="unsei_delete")
+     * @Method("DELETE")  // ④
+     * 
+     * @param Request $request
+     * @return Response
+     */
+    public function deleteAction(Request $request, $id)
+    {
+        return new Response('deleteAction');
+    }
+
+
     /**
      * @Route("/validate/{name}", defaults={"name" = ""})
      */
