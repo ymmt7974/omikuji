@@ -3,12 +3,16 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * Unsei
  *
  * @ORM\Table(name="unsei")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\UnseiRepository")
+ * 
+ * @UniqueEntity("name")
  */
 class Unsei
 {
@@ -22,7 +26,9 @@ class Unsei
     private $id;
 
     /**
-     * @ORM\Column(name="name", type="string") // ①
+     * @ORM\Column(name="name", type="string", unique=true)
+     * 
+     * @Assert\NotBlank()
      */
     private $name;
 
