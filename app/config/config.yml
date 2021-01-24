@@ -67,6 +67,17 @@ swiftmailer:
     password: '%mailer_password%'
     spool: { type: memory }
 
-sensio_framework_extra:
-   router:
-        annotations: false
+# sensio_framework_extra:
+#    router:
+#         annotations: false
+
+# FOSUserBundle
+fos_user:
+    db_driver: orm
+    firewall_name: main
+    user_class: AppBundle\Entity\User
+    service:
+        mailer: fos_user.mailer.twig_swift
+    from_email:
+        address: "%mailer_host%"
+        sender_name: "%mailer_user%"

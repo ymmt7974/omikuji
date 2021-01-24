@@ -1,3 +1,10 @@
 app:
     resource: '@AppBundle/Controller/'
     type: annotation
+# 全ての機能を使う場合（セルフ登録、パスワード変更、プロフィール変更等）
+# fos_user:
+#     resource: "@FOSUserBundle/Resources/config/routing/all.xml"
+
+# ログイン、ログアウトだけを使う場合
+fos_user_security:
+    resource: "@FOSUserBundle/Resources/config/routing/security.xml"

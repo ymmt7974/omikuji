@@ -1,48 +1,27 @@
-# To get started with security, check out the documentation:
-# https://symfony.com/doc/current/security.html
 security:
-
-    # https://symfony.com/doc/current/security.html#b-configuring-how-users-are-loaded
-    providers:
-        in_memory:
-            memory:
-                users:
-                    user:
-                        password: $2y$12$8z4ePaCfgbS9J4Pmre/DQOa/6.yKmux.YZF18D1PHt.678FuqpB8y
-                        roles: 'ROLE_USER'
-                    admin:
-                        password: $2y$12$rQ/zkBNpos5A9j0deU3.s.9dZ//.lOpA8CsdTI1C38RE3cYjLJak2
-                        roles: 'ROLE_ADMIN'
     # 認証方法
     firewalls:
-        # disables authentication for assets and the profiler, adapt it according to your needs
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-
+ 
         main:
+            # フォームログイン
+            form_login:
+                provider: fos_userbundle
+                csrf_token_generator: security.csrf.token_manager
+            logout: true
             anonymous: ~
-            # activate different ways to authenticate
-            logout_on_user_change: true
-            # https://symfony.com/doc/current/security.html#a-configuring-how-your-users-will-authenticate
-            http_basic: ~
-
-            # https://symfony.com/doc/current/security/form_login_setup.html
-            #form_login: ~
-
-    # アクセス制御（承認が必要なURLとRoleの設定）
+ 
+    # アクセス制御
     access_control:
-        - { path: ^/unsei, roles: ROLE_ADMIN }
-
-    # ユーザー情報の取得方法
-    # providers:
-
-    # パスワード暗号化アルゴリズム
+        - { path: ^/unsei, role: ROLE_ADMIN }
+ 
+    # ユーザー情報取得方法
+    providers:
+        fos_userbundle:
+            id: fos_user.user_provider.username
+ 
+    # パスワード暗号化方法
     encoders:
-        # 平文テキスト
-        # Symfony\Component\Security\Core\User\User: plaintext
-        # bcryptアルゴリズム
-        Symfony\Component\Security\Core\User\User:
-            algorithm: bcrypt
-            cost: 12
-
+        FOS\UserBundle\Model\UserInterface: bcrypt
