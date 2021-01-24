@@ -58,6 +58,8 @@ class UnseiController extends Controller
             $em = $this->getDoctrine()->getManager();     // ③
             $em->persist($unsei);
             $em->flush();
+
+            $this->addFlash('notice', "{$unsei->getName()}を追加しました");
             
             return $this->redirectToRoute('unsei_index'); // ④
         }
@@ -77,9 +79,8 @@ class UnseiController extends Controller
      * @param Request $request
      * @return Response
      */
-    public function editAction(Request $request, Post $post) // タイプヒントで"Post"を明記
+    public function editAction(Request $request, $id)
     {
-        // Do something
         $repository = $this->getDoctrine()->getRepository(Unsei::class);
         $unsei = $repository->find($id);
 
@@ -96,6 +97,8 @@ class UnseiController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->flush(); // ④
             
+            $this->addFlash('notice', "{$unsei->getName()}に更新しました");
+
             return $this->redirectToRoute('unsei_index');
         }
 
@@ -127,6 +130,7 @@ class UnseiController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->remove($unsei); // ③
             $em->flush();
+            $this->addFlash('notice', "{$unsei->getName()}を削除しました");
         }
 
         return $this->redirectToRoute('unsei_index');
