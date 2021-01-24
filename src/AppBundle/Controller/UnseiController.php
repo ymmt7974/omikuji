@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use AppBundle\Entity\Unsei;
+use AppBundle\Form\UnseiType;
 use Doctrine\ORM\EntityManager;
 
 /**
@@ -45,9 +46,10 @@ class UnseiController extends Controller
     {
         $unsei = new Unsei();
         
-        $form = $this->createFormBuilder($unsei)
-            ->add('name', TextType::class)
-            ->getForm();
+        // $form = $this->createFormBuilder($unsei)
+        //     ->add('name', TextType::class)
+        //     ->getForm();
+        $form = $this->createForm(UnseiType::class, $unsei); // ①
 
         // Form送信のハンドリング
         $form->handleRequest($request);                   // ①
@@ -70,29 +72,66 @@ class UnseiController extends Controller
      * 運勢の編集
      * 
      * @Route("/{id}/edit", name="unsei_edit")
-     * @Method({"GET", "PUT"})  // ③
+     * @Method({"GET", "PUT"})  // (a)
      * 
      * @param Request $request
      * @return Response
      */
-    public function editAction(Request $request, $id)
+    public function editAction(Request $request, Post $post) // タイプヒントで"Post"を明記
     {
-        return new Response('editAction');
+        // Do something
+        $repository = $this->getDoctrine()->getRepository(Unsei::class);
+        $unsei = $repository->find($id);
+
+        if (!$unsei) {
+            throw $this->createNotFoundException('No unsei found for id '.$id);
+        }
+        
+        $form = $this->createForm(UnseiType::class, $unsei, [ // ①
+            'method' => 'PUT',  // ②
+        ]);
+        
+        $form->handleRequest($request); // ③
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->flush(); // ④
+            
+            return $this->redirectToRoute('unsei_index');
+        }
+
+        return $this->render('unsei/edit.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
+
     
     /**
      * 運勢の削除
      * 
      * @Route("/{id}", name="unsei_delete")
-     * @Method("DELETE")  // ④
+     * @Method("DELETE") // ①
      * 
      * @param Request $request
      * @return Response
      */
     public function deleteAction(Request $request, $id)
     {
-        return new Response('deleteAction');
+        $repository = $this->getDoctrine()->getRepository(Unsei::class);
+        $unsei = $repository->find($id);
+
+        if (!$unsei) {
+            throw $this->createNotFoundException('No unsei found for id '.$id);
+        }
+        
+        if ($this->isCsrfTokenValid('unsei', $request->get('_token'))) { // ②
+            $em = $this->getDoctrine()->getManager();
+            $em->remove($unsei); // ③
+            $em->flush();
+        }
+
+        return $this->redirectToRoute('unsei_index');
     }
+
 
 
     /**
